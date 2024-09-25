@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="60" height="40">
+  <path d="M0 0h60v40H0z" fill="#FFFEFE"/>
+  <path d="M0 0h60v20H0z" fill="red"/>
+</svg>

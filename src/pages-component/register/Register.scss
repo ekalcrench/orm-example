@@ -1,0 +1,52 @@
+.auth-page {
+  padding: 16px 32px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .second-section-wrapper {
+    padding: 40px;
+    padding-bottom: 24px;
+    flex: 1;
+
+    .second-section {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .logo-wrapper {
+        margin-bottom: 64px;
+      }
+
+      .form-wrapper {
+        width: 100%;
+
+        .MuiTypography-h4 {
+          margin-bottom: 24px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .auth-page {
+    padding: 0px 5vw;
+
+    .second-section-wrapper {
+      padding-top: 0px;
+      padding-left: 0px;
+      padding-right: 0px;
+      padding-bottom: 0px;
+
+      .second-section {
+        .logo-wrapper {
+          margin-top: -10vh;
+        }
+      }
+    }
+  }
+}
