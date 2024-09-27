@@ -1,0 +1,30 @@
+@import '../../theme/Colors.scss';
+
+.private-route-navbar {
+  height: 72px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  box-sizing: border-box;
+  padding-left: 60px;
+  padding-right: 60px;
+  border-bottom: 1px solid $borderColor;
+  position: relative;
+
+  @media screen and (max-width: 600px) {
+    height: 68px;
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+
+  .sibagi-wrapper {
+    width: 100px;
+    height: 30px;
+    position: relative;
+
+    @media screen and (max-width: 600px) {
+      width: 90px;
+      height: 27px;
+    }
+  }
+}

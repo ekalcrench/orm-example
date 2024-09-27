@@ -11,7 +11,7 @@ import './Register.scss';
 
 function Register() {
   return (
-    <Grid className="auth-page" container>
+    <Grid className="register-page" container>
       <Grid className="second-section-wrapper" size={{ xs: 12, sm: 6 }}>
         <Box className="second-section">
           <Box className="logo-wrapper">

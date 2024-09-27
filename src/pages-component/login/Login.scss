@@ -1,5 +1,6 @@
 .auth-page {
-  padding: 16px 32px;
+  width: 600px;
+  margin: auto;
   box-sizing: border-box;
   min-height: 100vh;
   display: flex;
@@ -34,19 +35,10 @@
 
 @media screen and (max-width: 600px) {
   .auth-page {
-    padding: 0px 5vw;
+    width: auto;
 
     .second-section-wrapper {
-      padding-top: 0px;
-      padding-left: 0px;
-      padding-right: 0px;
-      padding-bottom: 0px;
-
-      .second-section {
-        .logo-wrapper {
-          margin-top: -10vh;
-        }
-      }
+      padding: 24px 20px;
     }
   }
 }

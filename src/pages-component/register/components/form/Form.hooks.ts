@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { defaultMessage, paths, unauthorized } from '@/constants';
+import { defaultMessage, paths, unauthorized, userApi } from '@/constants';
 import { setLoading } from '@/lib/features/loader/Loader.slice';
 import {
   handleOpenToast,
@@ -15,7 +15,7 @@ import { removeAuth } from '@/utils';
 import { registerDefaultValue, registerSchema } from './Form.constants';
 import { RegisterForm } from './Form.types';
 import { UserModel } from '@/types';
-import { createUser } from '@/prisma/User';
+// import { createUser } from '@/prisma/User';
 import { useState } from 'react';
 
 function useCustomForm() {
@@ -32,25 +32,24 @@ function useCustomForm() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmationPassword, setShowConfirmationPassword] =
+    useState<boolean>(false);
 
   const handleCloseToast = () => {
     dispatch(setCloseToast());
   };
 
-  const onErrorApi = async (error: any) => {
-    const data = error.data;
+  const onErrorApi = async (
+    errorMessage: string,
+    isRemoveAuth: boolean = false
+  ) => {
+    let message = errorMessage;
 
-    let message;
-
-    if (error?.status === 401) {
+    if (isRemoveAuth) {
       await removeAuth();
 
       router.replace(paths.login);
       message = unauthorized;
-    }
-
-    if (data?.errors?.messages) {
-      message = data?.errors?.messages[0];
     }
 
     dispatch(
@@ -101,18 +100,42 @@ function useCustomForm() {
     try {
       dispatch(setLoading(true));
 
-      const res = await createUser({
+      const body: Omit<UserModel, 'id'> = {
         email: values.email,
         name: values.name,
         password: values.password,
+      };
+
+      const res = await fetch(userApi.register, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
       });
 
       console.log('res nya ini ya : ', res);
-      // await postUserAuthRegistration(data).unwrap();
 
-      // router.push(paths.registerSuccess);
-    } catch (error) {
-      onErrorApi(error);
+      if (!res.ok) {
+        const errorName = (await res.json()) as unknown as { name: string };
+        throw new Error(errorName.name);
+      }
+
+      dispatch(
+        handleOpenToast({
+          open: true,
+          message: 'Sukses mendaftar Anda akan diarahkan untuk login',
+          title: 'Sukses',
+          type: 'success',
+          onClose: handleCloseToast,
+        })
+      );
+
+      router.replace(paths.login);
+    } catch (error: any) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      onErrorApi(errorMessage);
     } finally {
       dispatch(setLoading(false));
     }
@@ -121,10 +144,12 @@ function useCustomForm() {
   return {
     // State
     inputFormMethod,
+    showConfirmationPassword,
     showPassword,
 
     // Function
     handleSubmit,
+    setShowConfirmationPassword,
     setShowPassword,
   };
 }

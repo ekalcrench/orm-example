@@ -3,6 +3,7 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid2';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Link from '@mui/material/Link';
@@ -17,16 +18,18 @@ function Form() {
   const {
     // State
     inputFormMethod: { control, trigger },
+    showConfirmationPassword,
     showPassword,
 
     // Function
     handleSubmit,
+    setShowConfirmationPassword,
     setShowPassword,
   } = useCustomForm();
 
   return (
-    <Box>
-      <Box sx={{ marginBottom: '1rem' }}>
+    <Grid container spacing={1}>
+      <Grid size={{ xs: 12 }}>
         <CustomInput
           label="Email"
           name="email"
@@ -35,9 +38,8 @@ function Form() {
           placeholder="Masukan email"
           renderErrorMessage
         />
-      </Box>
-
-      <Box sx={{ marginBottom: '1rem' }}>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
         <CustomInput
           label="Nama"
           name="name"
@@ -46,9 +48,8 @@ function Form() {
           placeholder="Masukan nama"
           renderErrorMessage
         />
-      </Box>
-
-      <Box sx={{ marginBottom: '1rem' }}>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
         <CustomInput
           textFieldProps={{
             type: showPassword ? 'text' : 'password',
@@ -78,38 +79,71 @@ function Form() {
           placeholder="Masukan password"
           renderErrorMessage
         />
-      </Box>
-
-      <Box sx={{ marginBottom: '1rem' }}>
+      </Grid>
+      <Grid size={{ xs: 12 }}>
+        <CustomInput
+          textFieldProps={{
+            type: showConfirmationPassword ? 'text' : 'password',
+            InputProps: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    edge="end"
+                    onClick={() =>
+                      setShowConfirmationPassword((prevState) => !prevState)
+                    }>
+                    {showConfirmationPassword ? (
+                      <VisibilityOff color="primary" />
+                    ) : (
+                      <Visibility color="primary" />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+            onKeyDown: (e) => {
+              if (e.key === 'Enter') handleSubmit();
+            },
+          }}
+          label="Konfirmasi Password"
+          name="confirmationPassword"
+          control={control}
+          trigger={trigger}
+          placeholder="Masukan password"
+          renderErrorMessage
+        />
+      </Grid>
+      <Grid size={{ xs: 12 }}>
         <CustomCheckbox
           controllerProps={{ control, name: 'isMoreThan17' }}
           checkboxLabel="Berusia 17 tahun ke atas"
         />
-      </Box>
+      </Grid>
 
-      <Box>
+      <Grid size={{ xs: 12 }} sx={{ marginTop: '2rem' }}>
         <Typography
           textAlign={'justify'}
           sx={{ typography: { sm: 'body1', xs: 'body2' } }}>
           Melanggar syarat dan ketentuan dapat menyebabkan akun Anda untuk
           dinonaktifkan (ban) secara sepihak oleh sibagi.
         </Typography>
-      </Box>
+      </Grid>
 
-      <Box sx={{ marginTop: '2.5rem' }}>
-        <Button sx={{ width: '100%' }} onClick={handleSubmit}>
-          Daftar
-        </Button>
-      </Box>
-
-      <BoxFlexEnd sx={{ marginTop: '1rem' }}>
-        <Link href={paths.login}>
-          <Button sx={{ color: 'input.placeholder' }} variant="text">
-            Sudah punya akun?
+      <Grid size={{ xs: 12 }} sx={{ marginTop: '2rem' }}>
+        <Box>
+          <Button sx={{ width: '100%' }} onClick={handleSubmit}>
+            Daftar
           </Button>
-        </Link>
-      </BoxFlexEnd>
-    </Box>
+          <BoxFlexEnd sx={{ marginTop: '0.5rem' }}>
+            <Link href={paths.login}>
+              <Button sx={{ color: 'input.placeholder' }} variant="text">
+                Sudah punya akun?
+              </Button>
+            </Link>
+          </BoxFlexEnd>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
 

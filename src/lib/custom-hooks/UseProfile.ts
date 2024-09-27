@@ -1,117 +1,96 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 
-import _ from 'lodash';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { useLazyGetUserProfileQuery } from '@/api/user-profile';
-import { defaultMessage, paths, unauthorized } from '@/constants';
+import { defaultMessage, paths, unauthorized, userApi } from '@/constants';
 import { removeAuth } from '@/utils';
 import { ProfileSlice, setProfile } from '../features/profile/Profile.slice';
 import { setCloseToast, handleOpenToast } from '../features/toast/Toast.slice';
 import { useAppSelector, useAppDispatch } from '../Hooks';
+import { getSession } from '@/actions';
 
 interface UseProfileProps {
   isNeedToBeLogout?: boolean;
 }
 
-export default function useProfile({
-  isNeedToBeLogout = false,
-}: UseProfileProps) {
-  const [
-    getUserProfile,
-    { isLoading: isLoadingGetData, isFetching: isFetchingGetData },
-  ] = useLazyGetUserProfileQuery();
-
-  const isLoading = isLoadingGetData || isFetchingGetData;
-
+export default function useProfile() {
   const profile = useAppSelector((state) => state.profile);
+  const auth = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
 
-  const pathname = usePathname();
   const router = useRouter();
 
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean>(false);
   const [needToRefetchProfile, setNeedToRefetchProfile] =
     useState<boolean>(false);
+  const [isLoadingGetData, setIsLoadingGetData] = useState<boolean>(false);
 
   const handleCloseToast = () => {
     dispatch(setCloseToast());
   };
 
-  const onErrorApi = async (error: any) => {
-    let message;
-
-    if (error?.status === 401) {
+  const onErrorApi = async (message: string, status: number) => {
+    if (status === 401) {
       await removeAuth();
 
-      if (isNeedToBeLogout) router.replace(paths.login);
-      message = unauthorized;
+      router.replace(paths.login);
     }
 
-    const data = error.data;
-
-    if (data?.errors?.messages) {
-      message = data?.errors?.messages[0];
-    }
-
-    if (isNeedToBeLogout) {
-      dispatch(
-        handleOpenToast({
-          open: true,
-          message: message ?? defaultMessage,
-          type: 'error',
-          onClose: handleCloseToast,
-        })
-      );
-    }
+    dispatch(
+      handleOpenToast({
+        open: true,
+        message: message ?? defaultMessage,
+        type: 'error',
+        onClose: handleCloseToast,
+      })
+    );
   };
 
   const fetchProfile = async () => {
-    try {
-      const res = await getUserProfile().unwrap();
+    setIsLoadingGetData(true);
 
-      setIsProfileComplete(checkIsProfileComplete(res));
+    console.log('auth di fetchProfile : ', auth);
 
-      dispatch(setProfile(res));
-    } catch (error) {
-      onErrorApi(error);
-    }
-  };
+    const res = await fetch(userApi.profile, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth?.sessionId}`,
+      },
+    });
 
-  const checkIsProfileComplete = (res: Partial<ProfileSlice>): boolean => {
-    const fullRes: Partial<ProfileSlice> = {
-      profilePictureUrl: '',
-    };
-
-    for (const key in fullRes) {
-      const currentKey = key as keyof ProfileSlice;
-
-      if (currentKey === 'profilePictureUrl' && res[currentKey]?.length === 0) {
-        return false;
-      }
+    if (res.ok) {
+      const { data } = await res.json(); // Parse response data if it's JSON
+      console.log('Success:', data); // e.g., { message: "Login successful", token: "abc123" }
+    } else {
+      // Handle errors, you can also access the error response body
+      const errorData = await res.json();
+      console.error('Error:', errorData); // e.g., { error: "Invalid credentials" }
+      onErrorApi(errorData.message, res.status);
     }
 
-    return true;
+    setIsLoadingGetData(false);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (Object.keys(profile).length > 0) return;
 
     fetchProfile();
   }, []);
 
   useEffect(() => {
-    if (Object.keys(profile).length === 0) return;
-
-    setIsProfileComplete(checkIsProfileComplete(profile));
-  }, [pathname]);
-
-  useEffect(() => {
     if (needToRefetchProfile) fetchProfile();
   }, [needToRefetchProfile]);
 
-  return { isLoading, isProfileComplete, profile, setNeedToRefetchProfile };
+  useEffect(() => {
+    console.log('profile : ', profile);
+  }, [JSON.stringify(profile)]);
+
+  return {
+    isLoadingGetData,
+    profile,
+    setNeedToRefetchProfile,
+  };
 }

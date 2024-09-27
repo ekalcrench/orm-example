@@ -1,10 +1,10 @@
-const basePath = "/";
+const basePath = '/';
 
 export const paths = {
   base: basePath,
 
   // Auth
-  login: `${basePath}login`,
+  login: `${basePath}`,
   register: `${basePath}register`,
   registerSuccess: `${basePath}register/success`,
 

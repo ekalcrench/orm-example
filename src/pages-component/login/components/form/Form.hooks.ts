@@ -5,8 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { login } from '@/actions';
-import { usePostUserAuthLoginMutation } from '@/api/user-auth';
-import { defaultMessage, paths, unauthorized } from '@/constants';
+import { authApi, defaultMessage, paths, unauthorized } from '@/constants';
 import { setLoading } from '@/lib/features/loader/Loader.slice';
 import {
   handleOpenToast,
@@ -31,9 +30,6 @@ function useCustomForm() {
 
   const redirectTo = searchParams.get('redirect_to');
 
-  // Api state
-  const [postUserAuthLogin] = usePostUserAuthLoginMutation();
-
   const dispatch = useAppDispatch();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -42,20 +38,11 @@ function useCustomForm() {
     dispatch(setCloseToast());
   };
 
-  const onErrorApi = async (error: any) => {
-    const data = error.data;
-
-    let message;
-
-    if (error?.status === 401) {
+  const onErrorApi = async (message: string, status: number) => {
+    if (status === 401) {
       await removeAuth();
 
       router.replace(paths.login);
-      message = unauthorized;
-    }
-
-    if (data?.errors?.messages) {
-      message = data?.errors?.messages[0];
     }
 
     dispatch(
@@ -79,13 +66,23 @@ function useCustomForm() {
   const onSubmit = async () => {
     const values = getValues();
 
-    try {
-      dispatch(setLoading(true));
+    dispatch(setLoading(true));
 
-      const res = await postUserAuthLogin(values).unwrap();
+    const res = await fetch(authApi.login, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+      }),
+    });
 
-      await login(res);
-
+    if (res.ok) {
+      const { data } = await res.json(); // Parse response data if it's JSON
+      console.log('Success:', data); // e.g., { message: "Login successful", token: "abc123" }
+      await login({ email: data.email, sessionId: data.sessionId });
       dispatch(
         handleOpenToast({
           open: true,
@@ -95,17 +92,14 @@ function useCustomForm() {
           onClose: handleCloseToast,
         })
       );
-
-      if (redirectTo) {
-        router.replace(redirectTo);
-      } else {
-        router.replace(paths.dashboard);
-      }
-    } catch (error) {
-      onErrorApi(error);
-    } finally {
-      dispatch(setLoading(false));
+    } else {
+      // Handle errors, you can also access the error response body
+      const errorData = await res.json();
+      console.error('Error:', errorData); // e.g., { error: "Invalid credentials" }
+      onErrorApi(errorData.message, res.status);
     }
+
+    dispatch(setLoading(false));
   };
 
   return {

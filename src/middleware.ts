@@ -1,10 +1,10 @@
-import { getSession } from "@/actions";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { paths } from "./constants";
+import { getSession } from '@/actions';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { paths } from './constants';
 
 // Paths for guest and private routes
-const guestRoutes = [paths.login, paths.register];
+const guestRoutes = [paths.register];
 const privateRoutes = [paths.dashboard, paths.account];
 
 // Helper function to check if user is logged in based on session
@@ -51,14 +51,13 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // Guest
-    "/login",
-    "/register/:path*",
+    '/register/:path*',
 
     // Private
-    "/dashboard",
-    "/account/:path*",
+    '/dashboard',
+    '/account/:path*',
 
     // Common
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

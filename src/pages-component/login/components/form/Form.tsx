@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import Link from "next/link";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Link from 'next/link';
 
-import { CustomInput } from "@/components";
-import { paths } from "@/constants";
-import { CenteredBox } from "@/styles";
-import useCustomForm from "./Form.hooks";
+import { CustomInput } from '@/components';
+import { paths } from '@/constants';
+import { BoxFlexEnd } from '@/styles';
+import useCustomForm from './Form.hooks';
 
 function Form() {
   const {
@@ -25,11 +25,11 @@ function Form() {
 
   return (
     <Box>
-      <Box sx={{ marginBottom: "1rem" }}>
+      <Box sx={{ marginBottom: '1rem' }}>
         <CustomInput
           textFieldProps={{
             onKeyDown: (e) => {
-              if (e.key === "Enter") handleSubmit();
+              if (e.key === 'Enter') handleSubmit();
             },
           }}
           label="Email"
@@ -44,14 +44,13 @@ function Form() {
       <Box>
         <CustomInput
           textFieldProps={{
-            type: showPassword ? "text" : "password",
+            type: showPassword ? 'text' : 'password',
             InputProps: {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     edge="end"
-                    onClick={() => setShowPassword((prevState) => !prevState)}
-                  >
+                    onClick={() => setShowPassword((prevState) => !prevState)}>
                     {showPassword ? (
                       <VisibilityOff color="primary" />
                     ) : (
@@ -62,7 +61,7 @@ function Form() {
               ),
             },
             onKeyDown: (e) => {
-              if (e.key === "Enter") handleSubmit();
+              if (e.key === 'Enter') handleSubmit();
             },
           }}
           label="Password"
@@ -74,19 +73,19 @@ function Form() {
         />
       </Box>
 
-      <Box sx={{ marginTop: "2.5rem" }}>
-        <Button sx={{ width: "100%" }} onClick={handleSubmit}>
+      <Box sx={{ marginTop: '2.5rem' }}>
+        <Button sx={{ width: '100%' }} onClick={handleSubmit}>
           Log In
         </Button>
       </Box>
 
-      <CenteredBox sx={{ marginTop: "1rem" }}>
+      <BoxFlexEnd sx={{ marginTop: '1rem' }}>
         <Link href={paths.register}>
-          <Button sx={{ color: "input.placeholder" }} variant="text">
+          <Button sx={{ color: 'input.placeholder' }} variant="text">
             Daftar akun baru
           </Button>
         </Link>
-      </CenteredBox>
+      </BoxFlexEnd>
     </Box>
   );
 }

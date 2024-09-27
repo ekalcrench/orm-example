@@ -1,18 +1,13 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { defaultMetadata } from "@/constants";
+import type { Metadata } from 'next';
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+
+import { AppWrapper } from '@/components';
+import { defaultMetadata } from '@/constants';
+import { MuiTheme } from '@/theme';
+import './globals.css';
+import StoreProvider from './StoreProvider';
 
 export const metadata: Metadata = {
   ...defaultMetadata,
@@ -24,9 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+    <html lang="id, in">
+      <body>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={MuiTheme}>
+            <StoreProvider>
+              <AppWrapper>{children}</AppWrapper>
+            </StoreProvider>
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

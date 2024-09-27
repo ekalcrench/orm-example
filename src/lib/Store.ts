@@ -1,12 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers } from "redux";
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
 
-import loaderSlice from "./features/loader/Loader.slice";
-import profileSlice from "./features/profile/Profile.slice";
-import toastSlice from "./features/toast/Toast.slice";
-import transactionSlice from "./features/transactions/Transactions.slice";
+import authSlice from './features/auth/Auth.slice';
+import loaderSlice from './features/loader/Loader.slice';
+import profileSlice from './features/profile/Profile.slice';
+import toastSlice from './features/toast/Toast.slice';
+import transactionSlice from './features/transactions/Transactions.slice';
 
 const appReducers = combineReducers({
+  auth: authSlice,
   loader: loaderSlice,
   profile: profileSlice,
   toast: toastSlice,
@@ -18,8 +20,8 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ["toast/handleOpenToast", "toast/setCloseToast"],
-        ignoredPaths: ["toast.onClose", "payload.onClose"],
+        ignoredActions: ['toast/handleOpenToast', 'toast/setCloseToast'],
+        ignoredPaths: ['toast.onClose', 'payload.onClose'],
       },
     }),
 });
@@ -29,5 +31,5 @@ export default store;
 // Infer the type of Store
 export type AppStore = typeof store;
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];

@@ -1,5 +1,6 @@
-import { UserModel } from "@/types";
+import { UserModel } from '@/types';
 
-export interface RegisterForm extends Omit<UserModel, "id"> {
+export interface RegisterForm extends Omit<UserModel, 'id'> {
+  confirmationPassword: string;
   isMoreThan17: boolean;
 }
