@@ -1,0 +1,32 @@
+@keyframes animate-button {
+  0%,
+  10%,
+  65%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  30% {
+    transform: rotate(-2deg) scale(1.05);
+  }
+
+  35% {
+    transform: rotate(2deg) scale(1.05);
+  }
+
+  40% {
+    transform: rotate(-2deg) scale(1.05);
+  }
+
+  45% {
+    transform: rotate(1deg) scale(1.05);
+  }
+
+  50% {
+    transform: rotate(-1deg) scale(1.05);
+  }
+}
+
+.button-animation {
+  animation: animate-button 2s ease-in-out infinite;
+}

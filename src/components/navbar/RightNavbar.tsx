@@ -12,24 +12,19 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { paths } from '@/constants';
+import { authApi, paths } from '@/constants';
 import useProfile from '@/lib/custom-hooks/UseProfile';
 import { setLoading } from '@/lib/features/loader/Loader.slice';
-import { useAppDispatch } from '@/lib/Hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/Hooks';
 import exampleAvatar from '@/static/img/example-avatar.png';
-import { removeAuth } from '@/utils';
 import { Avatar } from './Navbar.styles';
 import useDialog from '@/lib/custom-hooks/UseDialog';
 import useErrorApi from '@/lib/custom-hooks/UseErrorApi';
-import { usePostUserLogoutMutation } from '@/api/user-auth';
-import ModalConfirmation from '../modal-confirmation';
+import { fetchWithAuth } from '@/utils';
 
 function RightNavbar() {
-  const { isLoading, profile } = useProfile({});
-  const { dialogProps, hideDialog, setDialogWarning } = useDialog();
+  const { isLoadingGetData, profile } = useProfile();
   const { onErrorApi } = useErrorApi();
-
-  const [postUserLogout] = usePostUserLogoutMutation();
 
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -39,10 +34,6 @@ function RightNavbar() {
 
   const router = useRouter();
   const pathname = usePathname();
-
-  const setLoadingFunction = (loading: boolean) => {
-    dispatch(setLoading(loading));
-  };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -54,36 +45,30 @@ function RightNavbar() {
 
   const handleClickLogout = () => {
     handleCloseMenu();
-
-    setDialogWarning({
-      message: 'Apakah Anda yakin untuk Logout?',
-      onCancel: hideDialog,
-      onConfirm: () => {
-        hideDialog();
-        onLogout();
-      },
-    });
+    onLogout();
   };
 
   const onLogout = async () => {
-    try {
-      dispatch(setLoading(true));
+    dispatch(setLoading(true));
 
-      await postUserLogout().unwrap();
-      await removeAuth();
+    const res = await fetchWithAuth(authApi.logout, { method: 'POST' });
 
-      router.replace(pathname);
-    } catch (error) {
-      onErrorApi(error);
-    } finally {
-      dispatch(setLoading(false));
+    if (res.ok) {
+      const { data } = await res.json(); // Parse response data if it's JSON
+      console.log('Success:', data); // e.g., { message: "Login successful", token: "abc123" }
+      router.replace(paths.login);
+    } else {
+      // Handle errors, you can also access the error response body
+      const errorData = await res.json();
+      console.error('Error:', errorData); // e.g., { error: "Invalid credentials" }
+      onErrorApi(errorData.message, res.status);
     }
+
+    dispatch(setLoading(false));
   };
 
   return (
     <Fragment>
-      <ModalConfirmation {...dialogProps} />
-
       <Box
         sx={{
           display: 'flex',
@@ -91,9 +76,9 @@ function RightNavbar() {
           justifyContent: 'flex-end',
           flex: 1,
         }}>
-        {isLoading ? (
+        {isLoadingGetData ? (
           <CircularProgress />
-        ) : profile?.username ? (
+        ) : profile?.name ? (
           <Fragment>
             <Button
               ref={buttonRef}
@@ -107,16 +92,16 @@ function RightNavbar() {
               }}>
               <Avatar
                 src={
-                  profile?.profilePictureUrl
-                    ? profile?.profilePictureUrl.length > 0
-                      ? profile?.profilePictureUrl
+                  profile?.profilePicture
+                    ? profile?.profilePicture.length > 0
+                      ? profile?.profilePicture
                       : exampleAvatar.src
                     : exampleAvatar.src
                 }
                 alt="avatar"
               />
               <Typography fontWeight={500} variant="body2">
-                {profile?.username}
+                {profile?.name}
               </Typography>
             </Button>
 
@@ -132,8 +117,8 @@ function RightNavbar() {
                 },
               }}>
               <MenuItem onClick={handleCloseMenu}>
-                <Link href={paths.dashboard} style={{ width: '100%' }}>
-                  Dashboard
+                <Link href={paths.account} style={{ width: '100%' }}>
+                  Account
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleClickLogout}>Logout</MenuItem>

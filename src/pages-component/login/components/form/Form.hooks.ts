@@ -12,7 +12,7 @@ import {
   setCloseToast,
 } from '@/lib/features/toast/Toast.slice';
 import { useAppDispatch } from '@/lib/Hooks';
-import { removeAuth } from '@/utils';
+import { fetchWithAuth, removeAuth } from '@/utils';
 import { loginDefaultValue, loginSchema } from './Form.constants';
 import { Login } from './Form.types';
 
@@ -68,16 +68,25 @@ function useCustomForm() {
 
     dispatch(setLoading(true));
 
-    const res = await fetch(authApi.login, {
+    const res = await fetchWithAuth(authApi.login, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         email: values.email,
         password: values.password,
       }),
     });
+
+    // const res = await fetch(authApi.login, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     // Authorization: `Bearer ${auth?.sessionId}`,
+    //   },
+    //   body: JSON.stringify({
+    //     email: values.email,
+    //     password: values.password,
+    //   }),
+    // });
 
     if (res.ok) {
       const { data } = await res.json(); // Parse response data if it's JSON
@@ -92,6 +101,8 @@ function useCustomForm() {
           onClose: handleCloseToast,
         })
       );
+
+      router.replace(paths.dashboard);
     } else {
       // Handle errors, you can also access the error response body
       const errorData = await res.json();

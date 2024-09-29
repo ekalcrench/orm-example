@@ -5,7 +5,7 @@ import { paths } from './constants';
 
 // Paths for guest and private routes
 const guestRoutes = [paths.register];
-const privateRoutes = [paths.dashboard, paths.account];
+const privateRoutes = [paths.dashboard, paths.account, paths.post];
 
 // Helper function to check if user is logged in based on session
 async function isAuthenticated() {
@@ -56,6 +56,7 @@ export const config = {
     // Private
     '/dashboard',
     '/account/:path*',
+    '/post/:path*',
 
     // Common
     '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',

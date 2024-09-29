@@ -16,4 +16,8 @@ export const paths = {
   changePassword: `${basePath}account/change-password`,
   connectedDevice: `${basePath}account/connected-device`,
   requestDeletion: `${basePath}account/request-account-deletion`,
+
+  // Post
+  post: `${basePath}post`,
+  postDetail: (id: string) => `${basePath}post/${id}`,
 };

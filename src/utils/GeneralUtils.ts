@@ -49,3 +49,15 @@ export function transformValueToLabel(input: string): string {
 
   return capitalized;
 }
+
+export interface MetaType {
+  page: number;
+  pageSize: number;
+  totalData: number;
+  totalPages: number;
+}
+
+export interface PaginatedData<DATA = any> {
+  data: DATA;
+  meta: MetaType;
+}

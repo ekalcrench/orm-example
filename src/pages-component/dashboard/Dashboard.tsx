@@ -1,56 +1,103 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid2';
-import Typography from '@mui/material/Typography';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Grid2 as Grid,
+  Typography,
+} from '@mui/material';
 import Link from 'next/link';
 
-import { CustomImage } from '@/components';
-import { paths } from '@/constants';
-import dollarSquare from '@/static/svg/dollar-square.svg';
-import happyEmoji from '@/static/svg/happy-emoji.svg';
-import volumeHigh from '@/static/svg/volume-high.svg';
-import './Dashboard.scss';
 import useDashboard from './Dashboard.hooks';
+import { Avatar, DashboardContainer } from './Dashboard.styles';
+import { PostForm } from './components';
+import { CenteredBox, LeftBox } from '@/styles';
+import exampleAvatar from '@/static/img/example-avatar.png';
+import { paths } from '@/constants';
+import { LoadingComponent } from '@/components';
 
 export default function Dashboard() {
-  const {} = useDashboard();
+  const { allPosts, isLoadingGetData, onSuccessSubmitPost } = useDashboard();
 
   return (
-    <Box component={'section'} className="dashboard-container">
-      <Box className="list-card-container">
-        <Grid size={{ xs: 6, sm: 4, md: 3 }}>
-          <Card
-            sx={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box className="logo-wrapper" sx={{ marginRight: '16px' }}>
-                <CustomImage src={volumeHigh.src} alt="volume" fill />
-              </Box>
-              <Typography
-                // className="title"
-                fontSize={'1.75rem'}
-                fontWeight={500}>
-                Gift (Streaming)
-              </Typography>
-            </Box>
-            <Typography className="body" fontWeight={300}>
-              Atur Settingan Gift dan Overlay Streaming lainnya di sini.
-              Kompatibel dengan OBS dan Streamlabs.
-            </Typography>
-            <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end' }}>
-              <Button className="button" variant="outlined">
-                Atur Gift dan Overlay
-              </Button>
-            </Box>
-          </Card>
+    <DashboardContainer>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12 }}>
+          <PostForm onSuccessSubmit={onSuccessSubmitPost} />
         </Grid>
-      </Box>
-    </Box>
+        {allPosts?.data && allPosts?.data?.length > 0 ? (
+          allPosts?.data.map((value) => {
+            return (
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={value.id}>
+                <Card sx={{ padding: '0px !important', height: '100%' }}>
+                  <Link href={paths.postDetail(value.id)}>
+                    <CardActionArea
+                      sx={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-start',
+                        alignItems: 'flex-start',
+                      }}>
+                      <CardContent>
+                        <LeftBox>
+                          <Box>
+                            <Avatar
+                              src={
+                                value.author?.profilePicture
+                                  ? value.author?.profilePicture.length > 0
+                                    ? value.author?.profilePicture
+                                    : exampleAvatar.src
+                                  : exampleAvatar.src
+                              }
+                              alt="avatar"
+                            />
+                          </Box>
+
+                          <Box>
+                            <Typography>{value.author.name}</Typography>
+                            <Typography fontSize={12} fontWeight={300}>
+                              {value.author.email}
+                            </Typography>
+                          </Box>
+                        </LeftBox>
+                        <Box sx={{ marginTop: '16px' }}>
+                          <Typography>{value.body}</Typography>
+                        </Box>
+                      </CardContent>
+                      {value.image && (
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={value.image}
+                          alt="Post image"
+                        />
+                      )}
+                    </CardActionArea>
+                  </Link>
+                </Card>
+              </Grid>
+            );
+          })
+        ) : isLoadingGetData ? (
+          <Grid size={{ xs: 12 }}>
+            <CenteredBox sx={{ marginTop: '24px' }}>
+              <LoadingComponent />
+            </CenteredBox>
+          </Grid>
+        ) : (
+          <Grid size={{ xs: 12 }}>
+            <Card>
+              <CenteredBox>
+                <Typography>There is no posts available</Typography>
+              </CenteredBox>
+            </Card>
+          </Grid>
+        )}
+      </Grid>
+    </DashboardContainer>
   );
 }

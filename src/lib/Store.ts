@@ -1,14 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 
-import authSlice from './features/auth/Auth.slice';
 import loaderSlice from './features/loader/Loader.slice';
 import profileSlice from './features/profile/Profile.slice';
 import toastSlice from './features/toast/Toast.slice';
 import transactionSlice from './features/transactions/Transactions.slice';
 
 const appReducers = combineReducers({
-  auth: authSlice,
   loader: loaderSlice,
   profile: profileSlice,
   toast: toastSlice,
