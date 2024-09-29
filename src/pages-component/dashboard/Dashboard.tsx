@@ -2,6 +2,7 @@
 
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -18,15 +19,39 @@ import { CenteredBox, LeftBox } from '@/styles';
 import exampleAvatar from '@/static/img/example-avatar.png';
 import { paths } from '@/constants';
 import { LoadingComponent } from '@/components';
+import { formatDateddMMMyyyyhhmm } from '@/utils';
 
 export default function Dashboard() {
-  const { allPosts, isLoadingGetData, onSuccessSubmitPost } = useDashboard();
+  const {
+    // State
+    allPosts,
+    isAllPost,
+    isLoadingGetData,
+
+    // Function
+    onSuccessSubmitPost,
+    setIsAllPost,
+  } = useDashboard();
 
   return (
     <DashboardContainer>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12 }}>
           <PostForm onSuccessSubmit={onSuccessSubmitPost} />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <LeftBox sx={{ gap: '12px', marginBottom: '12px' }}>
+            <Button
+              variant={isAllPost ? 'contained' : 'outlined'}
+              onClick={() => setIsAllPost(true)}>
+              All Post
+            </Button>
+            <Button
+              variant={!isAllPost ? 'contained' : 'outlined'}
+              onClick={() => setIsAllPost(false)}>
+              My Post
+            </Button>
+          </LeftBox>
         </Grid>
         {allPosts?.data && allPosts?.data?.length > 0 ? (
           allPosts?.data.map((value) => {
@@ -60,7 +85,7 @@ export default function Dashboard() {
                           <Box>
                             <Typography>{value.author.name}</Typography>
                             <Typography fontSize={12} fontWeight={300}>
-                              {value.author.email}
+                              {formatDateddMMMyyyyhhmm(value.createdDate)}
                             </Typography>
                           </Box>
                         </LeftBox>

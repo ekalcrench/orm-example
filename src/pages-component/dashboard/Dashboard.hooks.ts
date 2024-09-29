@@ -7,13 +7,17 @@ import useErrorApi from '@/lib/custom-hooks/UseErrorApi';
 import { fetchWithAuth } from '@/utils';
 import { PaginatedPosts, PostParameter } from './Dashboard.types';
 import { defaultParameter } from './Dashboard.constants';
+import { useAppSelector } from '@/lib/Hooks';
 
 export default function useDashboard() {
   const { onErrorApi } = useErrorApi();
 
+  const profile = useAppSelector((state) => state.profile);
+
   const [isLoadingGetData, setIsLoadingGetData] = useState<boolean>(false);
   const [allPosts, setAllPosts] = useState<PaginatedPosts>();
   const [parameter, setParameter] = useState<PostParameter>(defaultParameter);
+  const [isAllPost, setIsAllPost] = useState<boolean>(true);
 
   const onSuccessSubmitPost = () => {
     fetchPosts();
@@ -25,7 +29,7 @@ export default function useDashboard() {
     const res = await fetchWithAuth(
       postApi.getAll,
       { method: 'GET' },
-      { ...parameter }
+      { ...parameter, ...(!isAllPost && { email: profile?.email }) }
     );
 
     if (res.ok) {
@@ -44,7 +48,16 @@ export default function useDashboard() {
 
   useLayoutEffect(() => {
     fetchPosts();
-  }, []);
+  }, [isAllPost, JSON.stringify(profile)]);
 
-  return { allPosts, isLoadingGetData, onSuccessSubmitPost };
+  return {
+    // State
+    allPosts,
+    isAllPost,
+    isLoadingGetData,
+
+    // Function
+    onSuccessSubmitPost,
+    setIsAllPost,
+  };
 }

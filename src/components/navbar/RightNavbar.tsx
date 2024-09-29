@@ -20,7 +20,8 @@ import exampleAvatar from '@/static/img/example-avatar.png';
 import { Avatar } from './Navbar.styles';
 import useDialog from '@/lib/custom-hooks/UseDialog';
 import useErrorApi from '@/lib/custom-hooks/UseErrorApi';
-import { fetchWithAuth } from '@/utils';
+import { fetchWithAuth, removeAuth } from '@/utils';
+import { logout } from '@/actions';
 
 function RightNavbar() {
   const { isLoadingGetData, profile } = useProfile();
@@ -52,6 +53,8 @@ function RightNavbar() {
     dispatch(setLoading(true));
 
     const res = await fetchWithAuth(authApi.logout, { method: 'POST' });
+
+    await removeAuth();
 
     if (res.ok) {
       const { data } = await res.json(); // Parse response data if it's JSON

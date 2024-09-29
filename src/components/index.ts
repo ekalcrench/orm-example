@@ -5,5 +5,7 @@ export { default as CustomInput } from './custom-input';
 export { default as LoadingComponent } from './loading-component';
 export { default as LoadingModal } from './loading-modal';
 export { default as LoadingPage } from './loading-page';
+export { default as LoadingSubPage } from './loading-sub-page';
+export { default as ModalConfirmation } from './modal-confirmation';
 export { default as Navbar } from './navbar';
 export { default as NotFoundPage } from './not-found-page';

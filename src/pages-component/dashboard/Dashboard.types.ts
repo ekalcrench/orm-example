@@ -12,10 +12,13 @@ export interface Author {
 }
 
 export interface PostData {
-  id: string;
-  body: string;
-  image: string | null;
   author: Author;
+  body: string;
+  comments: any[];
+  createdDate: string;
+  id: string;
+  image: string | null;
+  lastModifiedDate: string;
 }
 
 export type PaginatedPosts = PaginatedData<PostData[]>;

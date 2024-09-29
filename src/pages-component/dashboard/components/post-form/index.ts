@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
 
-import { LoadingPage } from '@/components';
+import { LoadingComponent } from '@/components';
 import UsernameQme from './PostForm';
 
 export default dynamic(() => import('./PostForm'), {
-  loading: LoadingPage,
+  loading: LoadingComponent,
 }) as typeof UsernameQme;

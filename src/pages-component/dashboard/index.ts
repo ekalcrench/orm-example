@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
 
-import { LoadingPage } from '@/components';
+import { LoadingSubPage } from '@/components';
 import Dashboard from './Dashboard';
 
 export default dynamic(() => import('./Dashboard'), {
-  loading: LoadingPage,
+  loading: LoadingSubPage,
 }) as typeof Dashboard;
