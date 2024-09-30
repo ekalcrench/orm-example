@@ -1,12 +1,11 @@
 import * as yup from 'yup';
 
 import { requiredStringSchema } from '@/utils';
-import { PostForm } from './PostDetail.types';
+import { PostForm } from '../dashboard/components/post-form/PostForm.types';
 
 export const postDefaultValue: PostForm = {
   body: '',
   image: '',
-  id: '',
 };
 
 export const postSchema = yup

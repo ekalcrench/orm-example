@@ -2,7 +2,6 @@
 
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 import { poppins } from './FontFamily';
-import type {} from '@mui/x-date-pickers/themeAugmentation';
 
 let theme = createTheme({
   palette: {
@@ -207,34 +206,6 @@ let theme = createTheme({
           borderRadius: '8px !important',
           padding: '16px 24px',
         },
-      },
-    },
-    MuiPickersPopper: {
-      styleOverrides: {
-        paper: {
-          borderRadius: '8px !important',
-        },
-      },
-    },
-    MuiDateCalendar: {
-      styleOverrides: {
-        root: ({ ownerState, theme: { palette } }) => ({
-          '& .Mui-selected': {
-            color: `${palette.common.white} !important`,
-          },
-          '& .MuiSvgIcon-root': {
-            color: `${palette.primary.main} !important`,
-          },
-        }),
-      },
-    },
-    MuiMultiSectionDigitalClock: {
-      styleOverrides: {
-        root: ({ ownerState, theme: { palette } }) => ({
-          '& .Mui-selected': {
-            color: `${palette.common.white} !important`,
-          },
-        }),
       },
     },
     MuiAccordion: {

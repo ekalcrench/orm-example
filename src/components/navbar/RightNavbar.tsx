@@ -119,11 +119,6 @@ function RightNavbar() {
                     : 'auto',
                 },
               }}>
-              <MenuItem onClick={handleCloseMenu}>
-                <Link href={paths.account} style={{ width: '100%' }}>
-                  Account
-                </Link>
-              </MenuItem>
               <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
             </Menu>
           </Fragment>
